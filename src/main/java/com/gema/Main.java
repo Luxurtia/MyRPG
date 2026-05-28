@@ -20,6 +20,7 @@ public class Main {
                 @Override
                 public void windowClosing(WindowEvent e) {
                     game.stopGameLoop();        // 게임 루프 종료
+                    System.out.println("Game loop stopped");
                     frame.dispose();            // 창 지원 해제
                     System.exit(0);       // 프로그램 완전 종료
                 }
