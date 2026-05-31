@@ -2,6 +2,7 @@ package com.gema;
 
 import com.gema.state.GameStateManager;
 import com.gema.state.MenuState;
+import com.gema.system.InputHandler;
 
 import javax.swing.JPanel;
 import java.awt.Font;
@@ -10,7 +11,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-public class Game extends JPanel implements Runnable {
+public class Game extends JPanel implements Runnable {  // jpanel 상속 runnable 인터페이스 구현체
 
     static final int TILE_SIZE = 48;    // 티일 한 칸의 픽셀 크기
     static final int SCREEN_COLS = 20;  // 가로 타일의 수
@@ -21,7 +22,9 @@ public class Game extends JPanel implements Runnable {
 
     private Thread gameThread;  // 게임 루프를 돌릴 쓰레드
     private boolean running = false;    // 게임 루프 실행 여부 플래그
+
     private GameStateManager stateManager;        // 상태관리자 추가
+    private InputHandler inputHandler;
 
     private int currentFps = 0;                   //현재 fps
     private int frameCount = 0;                 // 1초동안 몇 프래임 그렸는지 카운트
@@ -32,7 +35,9 @@ public class Game extends JPanel implements Runnable {
         setBackground(Color.BLACK);
         setFocusable(true);     // 키보드 입력하려면 필요
 
-        stateManager = new GameStateManager(new MenuState());   // 처음 상태를 Menustate로 지정
+        inputHandler = new InputHandler();
+        addKeyListener(inputHandler);       //키 이벤트 등록
+        stateManager = new GameStateManager(new MenuState(inputHandler));   // 처음 상태를 Menustate로 지정 => menustate에 inputHandler 전달
     }
 
     public void startGameLoop() {
@@ -75,6 +80,7 @@ public class Game extends JPanel implements Runnable {
 
     private void update() {
         stateManager.update();      // stateManager에게 update 위임
+        inputHandler.flush();       // 매 프래임 끝에 justPressed 초기화
     }
 
     @Override
