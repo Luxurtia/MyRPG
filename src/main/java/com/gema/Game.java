@@ -37,8 +37,9 @@ public class Game extends JPanel implements Runnable {  // jpanel 상속 runnabl
 
         inputHandler = new InputHandler();
         addKeyListener(inputHandler);       //키 이벤트 등록
-        stateManager = new GameStateManager(new MenuState(inputHandler));   // 처음 상태를 Menustate로 지정 => menustate에 inputHandler 전달
-    }
+
+        stateManager = new GameStateManager(new MenuState(inputHandler, this));   // 처음 상태를 Menustate로 지정 => menustate에 inputHandler 전달
+    }                                                                                   // this = game 객체
 
     public void startGameLoop() {
         running = true;                      // 루프 실행 여부 변경
@@ -49,6 +50,7 @@ public class Game extends JPanel implements Runnable {  // jpanel 상속 runnabl
 
     public void stopGameLoop() {
         running = false;
+        System.out.println("Stopping game loop");
     }
 
     @Override

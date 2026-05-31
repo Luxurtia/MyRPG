@@ -5,6 +5,9 @@ import java.awt.event.KeyEvent;
 import java.util.*;
 
 public class InputHandler extends KeyAdapter {
+                // Key Adapter => java에서 제공하는 클래스
+                // 안에 keyPressed, keyReleased, keyTyped 세가지 메소드가 비어서 정의 되어 있음
+
     private final Map<Integer, List<Action>> keyMap = new HashMap<>();    // 키 코드 => 액션 매핑 테이블
     private final Set<Action> heldActions = new HashSet<>();        // 현재 눌려 있는 액션 목록
     private final Set<Action> justPressedActions = new HashSet<>(); // 이번 프레임에 처음 눌린 액션 목록
@@ -61,7 +64,7 @@ public class InputHandler extends KeyAdapter {
     }
 
     @Override
-    public void KeyReleased(KeyEvent e) {           // 키를 땔때 동작을 멈추는 코드
+    public void keyReleased(KeyEvent e) {           // 키를 땔때 동작을 멈추는 코드
         List<Action> actions = keyMap.get(e.getKeyCode());      // 현재 눌려 있던 키 코드
 
         if(actions == null) return;         // 매핑이 안되있는 키는 무시

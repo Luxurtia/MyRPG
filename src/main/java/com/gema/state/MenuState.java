@@ -1,6 +1,8 @@
 package com.gema.state;
 
 import com.gema.Game;
+import com.gema.system.Action;
+import com.gema.system.InputHandler;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -8,12 +10,40 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
 public class MenuState implements GameState {       // 메인 메뉴 화면 생성
+    private final InputHandler input;       // inputhandler 받아서 저장
+    private final Game game;                // 게임 루프 해제를 위해 받아옴
+
     private final String[] menuItems = {"새 게임", "이어하기", "설정", "종료"};  // 메뉴 항목
-    private int selectedIndex = 0;
+    private int selectedIndex = 0;      // 현재 선택된 인덱스
+
+    public MenuState(InputHandler input, Game game) {     // 생성자 만들어 inputhandler 주입
+        this.input = input;
+        this.game = game;
+    }
 
     @Override
     public void update() {
-        // 차후 키입력으로 selectedIndex 변경
+        if(input.isJustPressed(Action.UI_UP)) {
+            selectedIndex = (selectedIndex - 1 + menuItems.length) % menuItems.length;     // 위로 이동  + 0에서 위로 가면 마지막으로
+        }
+        if(input.isJustPressed(Action.UI_DOWN)) {
+            selectedIndex = (selectedIndex + 1) % menuItems.length;         // 마지막엘서 아래로 가면 맨 위로
+        }
+        if(input.isJustPressed(Action.UI_SELECT)) {
+            handleSelect();                                                 // 선택 처리
+        }
+    }
+
+    public void handleSelect() {
+        switch(selectedIndex) {
+            case 0 -> System.out.println("Game Start!");
+            case 1 -> System.out.println("Game load");
+            case 2 -> System.out.println("Setting");
+            case 3 -> {
+                game.stopGameLoop();
+                System.exit(0);
+            }
+        }
     }
 
     @Override
