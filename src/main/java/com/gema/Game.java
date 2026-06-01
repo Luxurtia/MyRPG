@@ -13,7 +13,7 @@ import java.awt.Graphics2D;
 
 public class Game extends JPanel implements Runnable {  // jpanel 상속 runnable 인터페이스 구현체
 
-    static final int TILE_SIZE = 48;    // 티일 한 칸의 픽셀 크기
+    static final int TILE_SIZE = 48;    // 타일 한 칸의 픽셀 크기
     static final int SCREEN_COLS = 20;  // 가로 타일의 수
     static final int SCREEN_ROWS = 14;  // 세로 타일의 수
     public static final int SCREEN_WIDTH = TILE_SIZE * SCREEN_COLS;    // 960PX
