@@ -14,9 +14,9 @@ public abstract class NPC extends Entity {
 
         // npc 기본 스탯
         speed = 2;
-        MaxHP = 200;
+        maxHp = 200;
         hp = 1;
-        MaxMP = 200;
+        maxMp = 200;
         mp = 1;
         att = 1;
         Matt = 1000;

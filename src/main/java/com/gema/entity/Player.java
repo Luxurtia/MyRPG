@@ -15,10 +15,10 @@ public class Player extends Entity{
 
         // 기본 스탯 설정
         speed   = 4;
-        MaxHP   = 200;
-        hp      = 100;
-        MaxMP   = 200;
-        mp      = 100;
+        maxHp   = 200;
+        hp      = 200;
+        maxMp   = 200;
+        mp      = 200;
         att     = 10;
         Matt    = 15;
         def     = 5;

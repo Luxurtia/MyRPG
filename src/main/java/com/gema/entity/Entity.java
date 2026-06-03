@@ -20,9 +20,9 @@ public abstract class Entity {      // 게임 내 존재 하는 객체
     public int worldX, worldY;      // 월드 좌표 (픽셀)
     public int speed;               // 이동속도     매 프레임 당 이동속도    EX) speed = 4 => 매프레임당 4픽셀 이동 한칸에 12프레임
 
-    public int MaxHP;               // 최대 체력
+    public int maxHp;               // 최대 체력
     public int hp;                  // 현재 체력
-    public int MaxMP;               // 최대 마나
+    public int maxMp;               // 최대 마나
     public int mp;                  // 현재 마나
     public int att;                 // 공격력
     public int Matt;                // 마공
