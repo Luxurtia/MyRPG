@@ -37,24 +37,24 @@ public class Renderer {
     private void renderHUD(Graphics2D g2, Player player) {
         // hp/mp 배경
         g2.setColor(new Color(0, 0, 0, 160));                               // 마지막은 투명도(0이 완전 투명)
-        g2.fillRoundRect(14, 14, 164, 22, 6, 6);    // hp  // x, y, 너비, 높이, 둥근모서리x, y
-        g2.fillRoundRect(14, 37, 164, 22, 6, 6);    // mp
+        g2.fillRoundRect(14, 24, 164, 22, 6, 6);    // hp  // x, y, 너비, 높이, 둥근모서리x, y
+        g2.fillRoundRect(14, 47, 164, 22, 6, 6);    // mp
 
         //hp바 비율만큼 채우기
         float ratiohp = (float)player.hp / player.maxHp;      // 현재 체력 / 최대체력 0.0~1.0
         g2.setColor(Color.RED);
-        g2.fillRoundRect(16, 16, (int)(160 * ratiohp), 18, 6, 6);     // 비율 만큼 너비 조절
+        g2.fillRoundRect(16, 24, (int)(160 * ratiohp), 18, 6, 6);     // 비율 만큼 너비 조절
 
         //mp바 채우기
         float ratiomp = (float)player.mp / player.maxMp;
         g2.setColor(Color.blue);
-        g2.fillRoundRect(16, 39, (int)(160 * ratiomp), 18, 6, 6);
+        g2.fillRoundRect(16, 47, (int)(160 * ratiomp), 18, 6, 6);
 
         // hp/mp텍스트
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("SansSerif", Font.BOLD, 13));
-        g2.drawString("HP" + player.hp + " / " + player.maxHp, 20, 16);
-        g2.drawString("MP" + player.mp + " / " + player.maxMp, 20, 39);
+        g2.drawString("HP" + player.hp + " / " + player.maxHp, 25, 37);
+        g2.drawString("MP" + player.mp + " / " + player.maxMp, 25, 62);
     }
 
 }
