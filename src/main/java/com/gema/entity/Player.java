@@ -2,6 +2,7 @@ package com.gema.entity;
 
 import com.gema.system.Action;
 import com.gema.system.InputHandler;
+import com.gema.world.TileMap;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -9,9 +10,11 @@ import java.awt.Graphics2D;
 
 public class Player extends Entity{
     private final InputHandler input;       // 키 입력 받아서 이동에 사용
+    private final TileMap tileMap;          // 충돌 판정용
 
-    public Player(InputHandler input) {
+    public Player(InputHandler input, TileMap tileMap) {
         this.input = input;
+        this.tileMap = tileMap;
 
         // 기본 스탯 설정
         speed   = 4;
@@ -39,24 +42,45 @@ public class Player extends Entity{
     }
 
     private void handleMovement() {
+        int dx = 0;
+        int dy = 0;
+
         if(input.isHeld(Action.MOVE_UP)) {
-            worldY -= speed;
+            dy -= speed;
             direction = Direction.UP;
         }
 
         if(input.isHeld(Action.MOVE_DOWN)) {
-            worldY += speed;
+            dy += speed;
             direction = Direction.DOWN;
         }
 
         if(input.isHeld(Action.MOVE_LEFT)) {
-            worldY -= speed;
+            dx -= speed;
             direction = Direction.LEFT;
         }
 
         if(input.isHeld(Action.MOVE_RIGHT)) {
-            worldY += speed;
+            dx += speed;
             direction = Direction.RIGHT;
+        }
+
+        int left        = worldX + dx;                          // 이동후 왼쪽 x
+        int right       = worldX + dx + TileMap.TILE_SIZE - 1;  // 이동후 오른쪽 x
+        int top         = worldY + dy;                          // 이동후 위쪽 y
+        int bot         = worldY + dy + TileMap.TILE_SIZE - 1;  // 이동후 아래쪽 y
+
+
+        // 충돌 체크
+        boolean solid = tileMap.isSolidAt(left, top) ||
+                        tileMap.isSolidAt(right, top) ||
+                        tileMap.isSolidAt(left, bot) ||
+                        tileMap.isSolidAt(left, bot);
+
+        if(!solid) {
+            // 충돌 체크 후 이동
+            worldX += dx;
+            worldY += dy;
         }
     }
 }

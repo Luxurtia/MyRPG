@@ -61,11 +61,11 @@ public class TileMap {
         int col = worldPixelX / TILE_SIZE;
         int row = worldPixelY / TILE_SIZE;
 
-        int tileId = mapData[row][col];
-
         if(col < 0 || col >= MAP_COLS || row < 0 || row >= MAP_ROWS) {      // 맵 밖으로 나갈경우 col row가 음수처리되서 맵뚫을 막음
             return true;
         }
+
+        int tileId = mapData[row][col];
 
         return (tileId < IS_SOLID.length) && IS_SOLID[tileId];
     }

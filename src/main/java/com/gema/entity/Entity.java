@@ -1,5 +1,7 @@
 package com.gema.entity;
 
+import com.gema.world.TileMap;
+
 import java.awt.Graphics2D;
 /*
     interface
@@ -44,8 +46,8 @@ public abstract class Entity {      // 게임 내 존재 하는 객체
     public abstract void render(Graphics2D g2, int ScreenX, int ScreenY);       // 매 프레임 렌더링
 
     public void setTilePosition(int col, int row) {     // 타일 좌표를 픽셀 좌표로 변환
-        worldX = col * 48;
-        worldY = row * 48;
+        worldX = col * TileMap.TILE_SIZE;
+        worldY = row * TileMap.TILE_SIZE;
     }
 
     public boolean isAlive() {      // 체력이 0 보다 크면 살아 있음

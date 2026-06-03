@@ -21,7 +21,7 @@ public class Renderer {
         renderMap(g2);                  // 맵을 맨 아래에 그림
         renderPlayer(g2, player);       // 그 위에 플래이어를 그림
         // npc나 몬스터
-        render(g2, player);             // 그위에 HUD(Head-Up Display => UI창)를 표시
+        renderHUD(g2, player);             // 그위에 HUD(Head-Up Display => UI창)를 표시
     }
 
     private void renderMap(Graphics2D g2) {

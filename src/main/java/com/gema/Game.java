@@ -3,6 +3,7 @@ package com.gema;
 import com.gema.state.GameStateManager;
 import com.gema.state.MenuState;
 import com.gema.system.InputHandler;
+import com.gema.util.AssetManager;
 
 import javax.swing.JPanel;
 import java.awt.Font;
@@ -25,6 +26,7 @@ public class Game extends JPanel implements Runnable {  // jpanel 상속 runnabl
 
     private GameStateManager stateManager;        // 상태관리자 추가
     private InputHandler inputHandler;
+    private AssetManager assets;
 
     private int currentFps = 0;                   //현재 fps
     private int frameCount = 0;                 // 1초동안 몇 프래임 그렸는지 카운트
@@ -35,11 +37,15 @@ public class Game extends JPanel implements Runnable {  // jpanel 상속 runnabl
         setBackground(Color.BLACK);
         setFocusable(true);     // 키보드 입력하려면 필요
 
+        assets       = new AssetManager();
         inputHandler = new InputHandler();
         addKeyListener(inputHandler);       //키 이벤트 등록
 
-        stateManager = new GameStateManager(new MenuState(inputHandler, this));   // 처음 상태를 Menustate로 지정 => menustate에 inputHandler 전달
-    }                                                                                   // this = game 객체
+        stateManager = new GameStateManager(inputHandler, assets, null);
+        stateManager.setGame(this);
+        System.out.println("changeState 호출 : [" + "MENU" + "]");
+        stateManager.changeState("MENU");
+    }
 
     public void startGameLoop() {
         running = true;                      // 루프 실행 여부 변경

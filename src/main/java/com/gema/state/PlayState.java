@@ -25,7 +25,7 @@ public class PlayState implements GameState {
         this.assets = assets;
 
         tileMap  = new TileMap();                    // 맵생성
-        player   = new Player(input);                // 플레이어 생성 및 키 입력전달
+        player   = new Player(input, tileMap);                // 플레이어 생성 및 키 입력전달
         camera   = new Camera(player, tileMap);      // 카메라 생성, 플레이어 및 맵 전달
         renderer = new Renderer(tileMap, camera);    // 렌더러 생성, 맵 및 카메라 전달
 

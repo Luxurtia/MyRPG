@@ -1,6 +1,6 @@
 package com.gema.state;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 
 public interface GameState {
     void update();

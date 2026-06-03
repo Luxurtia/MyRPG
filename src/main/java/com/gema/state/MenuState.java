@@ -10,15 +10,17 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
 public class MenuState implements GameState {       // 메인 메뉴 화면 생성
-    private final InputHandler input;       // inputhandler 받아서 저장
-    private final Game game;                // 게임 루프 해제를 위해 받아옴
+    private final InputHandler input;               // inputhandler 받아서 저장
+    private final Game game;                        // 게임 루프 해제를 위해 받아옴
+    private final GameStateManager stateManager;    // 씬 전환용
 
     private final String[] menuItems = {"새 게임", "이어하기", "설정", "종료"};  // 메뉴 항목
     private int selectedIndex = 0;      // 현재 선택된 인덱스
 
-    public MenuState(InputHandler input, Game game) {     // 생성자 만들어 inputhandler 주입
+    public MenuState(InputHandler input, Game game, GameStateManager stateManager) {     // 생성자 만들어 inputhandler 주입
         this.input = input;
         this.game = game;
+        this.stateManager = stateManager;
     }
 
     @Override
@@ -36,7 +38,10 @@ public class MenuState implements GameState {       // 메인 메뉴 화면 생�
 
     public void handleSelect() {
         switch(selectedIndex) {
-            case 0 -> System.out.println("Game Start!");
+            case 0 -> {
+                stateManager.changeState("PLAY");
+                System.out.println("Game Start!");
+            }
             case 1 -> System.out.println("Game load");
             case 2 -> System.out.println("Setting");
             case 3 -> {
