@@ -26,7 +26,6 @@ public class InputHandler extends KeyAdapter {
 
         // 플레이어 행동
         bind(KeyEvent.VK_Z, Action.TALK);           // npc대화
-        bind(KeyEvent.VK_TAB, Action.INVENTORY);      // 인벤토리
 
         // UI
         bind(KeyEvent.VK_UP,    Action.UI_UP);
@@ -35,8 +34,7 @@ public class InputHandler extends KeyAdapter {
         bind(KeyEvent.VK_RIGHT, Action.UI_RIGHT);
         bind(KeyEvent.VK_Z, Action.UI_SELECT);
         bind(KeyEvent.VK_ENTER, Action.UI_SELECT);
-        bind(KeyEvent.VK_X, Action.UI_BACK);
-        bind(KeyEvent.VK_TAB, Action.GAME_MENU);
+        bind(KeyEvent.VK_X, Action.UI_BACK, Action.GAME_MENU);
         bind(KeyEvent.VK_ESCAPE, Action.GAME_MENU);
 
         // bind(KeyEvent.VK_,        Action.);

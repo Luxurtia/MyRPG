@@ -130,11 +130,11 @@ public class GameMenuState implements GameState {
         g2.drawString("마법 공격력 : " + player.Matt, x, y + 120);
         g2.drawString("마법 방어력 : " + player.Mdef, x, y + 150);
 
-        g2.drawString("STR : " + player.STR, x + 50, y + 30);
-        g2.drawString("DEX : " + player.DEX, x + 50, y + 60);
-        g2.drawString("INT : " + player.INT, x + 50, y + 90);
-        g2.drawString("LUK : " + player.LUK, x + 50, y + 120);
-        g2.drawString("VIT : " + player.VIT, x + 50, y + 150);
+        g2.drawString("STR : " + player.STR, x + 150, y + 30);
+        g2.drawString("DEX : " + player.DEX, x + 150, y + 60);
+        g2.drawString("INT : " + player.INT, x + 150, y + 90);
+        g2.drawString("LUK : " + player.LUK, x + 150, y + 120);
+        g2.drawString("VIT : " + player.VIT, x + 150, y + 150);
     }
 
     private void renderStatus(Graphics2D g2, int x, int y) {

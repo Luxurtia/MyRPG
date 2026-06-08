@@ -59,7 +59,7 @@ public class PlayState implements GameState {
         g2.dispose();                                         // 자원 해제
 
         gamemenustate.setBackground(background);              // 캡쳐한 화면을 전달
-        stateManager.changeState("Game_Menu", gamemenustate); // 씬전환
+        stateManager.changeState("GAME_MENU", gamemenustate); // 씬전환
     }
 
     @Override
