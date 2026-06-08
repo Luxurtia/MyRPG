@@ -37,6 +37,10 @@ public class GameStateManager {
         }
     }
 
+    public void changeState(String state, GameState gamestate) {
+        currentState = gamestate;
+    }
+
     public void update() {
         currentState.update();          // 현재 상태의 update() 실행
     }

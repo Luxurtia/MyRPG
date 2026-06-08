@@ -31,6 +31,12 @@ public abstract class Entity {      // 게임 내 존재 하는 객체
     public int def;                 // 방어력
     public int Mdef;                // 마방
 
+    public int STR;     // 물공, 물방, HP
+    public int DEX;     // 회피?, 물공
+    public int INT;     // 마공, MP, 마방
+    public int LUK;     // 크리?,
+    public int VIT;     // HP, MP, 물방, 마방
+
     public enum Direction {     // 방향 열거
         UP,
         DOWN,

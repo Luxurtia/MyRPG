@@ -36,7 +36,8 @@ public class InputHandler extends KeyAdapter {
         bind(KeyEvent.VK_Z, Action.UI_SELECT);
         bind(KeyEvent.VK_ENTER, Action.UI_SELECT);
         bind(KeyEvent.VK_X, Action.UI_BACK);
-        bind(KeyEvent.VK_ESCAPE, Action.MENU);
+        bind(KeyEvent.VK_TAB, Action.GAME_MENU);
+        bind(KeyEvent.VK_ESCAPE, Action.GAME_MENU);
 
         // bind(KeyEvent.VK_,        Action.);
     }

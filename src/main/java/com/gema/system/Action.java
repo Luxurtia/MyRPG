@@ -22,6 +22,6 @@ public enum Action {       // 키보드 동작 매핑용
     UI_RIGHT,
     UI_SELECT,
     UI_BACK,
-    MENU,
+    GAME_MENU       // 인게임 메뉴열기
 
 }
