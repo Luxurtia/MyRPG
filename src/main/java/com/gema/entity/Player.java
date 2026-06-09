@@ -16,7 +16,7 @@ public class Player extends Entity{
         this.input = input;
         this.tileMap = tileMap;
 
-        // 기본 스탯 설정
+/*      // 기본 스탯 설정
         speed   = 4;
         maxHp   = 200;
         hp      = 200;
@@ -26,6 +26,16 @@ public class Player extends Entity{
         Matt    = 15;
         def     = 5;
         Mdef    = 15;
+*/
+        speed   = 4;
+        statPoint = 5;
+        STR = 5;
+        DEX = 5;
+        INT = 5;
+        LUK = 5;
+        VIT = 5;
+
+        recalcStat();
     }
 
     @Override
@@ -35,8 +45,6 @@ public class Player extends Entity{
 
     @Override
     public void render(Graphics2D g2, int screenX, int screenY) {
-        // 임시 placeholer
-
         g2.setColor(Color.BLUE);
         g2.fillRect(screenX, screenY, 48, 48);
     }
@@ -82,5 +90,18 @@ public class Player extends Entity{
             worldX += dx;
             worldY += dy;
         }
+    }
+
+    // 스텟 계산식
+    public void recalcStat() {
+        att = STR * 2 + DEX;        // 물공
+        def = STR + VIT * 2;        // 물방
+        Matt = INT * 2 + LUK;       // 마공
+        Mdef = VIT * 2;             // 마방
+        maxHp = VIT * 50 + STR;      // 최대 체력
+        maxMp = VIT * 20 + INT;      // 최대 마나
+
+        hp = maxHp;
+        mp = maxMp;
     }
 }

@@ -16,6 +16,8 @@ public class GameMenuState implements GameState {
     private final InputHandler      input;
     private final GameStateManager  stateManager;
     private final Player            player;
+    private int selectedStat = 0;
+    private boolean statConfirmed = false;      // 스텟 확정 여부
 
     private BufferedImage           background;         // 메뉴 열릴때 화면이 캡쳐되면 배경으로 쓰도록 함
 
@@ -46,14 +48,68 @@ public class GameMenuState implements GameState {
     @Override
     public void update() {
         if(input.isJustPressed(Action.UI_LEFT)) {
-            selectedMenu = (selectedMenu - 1 + menuarr.length) % menuarr.length;        // 왼쪽으로 이동
+            selectedMenu = (selectedMenu - 1 + menuarr.length) % menuarr.length;       // 왼쪽으로 이동
         }
+
         if(input.isJustPressed(Action.UI_RIGHT)) {
-            selectedMenu = (selectedMenu + 1) % menuarr.length;                           // 오른쪽으로 이동
+            selectedMenu = (selectedMenu + 1) % menuarr.length;                        // 오른쪽으로 이동
         }
+
         if(input.isJustPressed(Action.UI_BACK)) {
-            stateManager.changeState("PLAY");                                               // x키로 메뉴 닫기
+            stateManager.changeState("PLAY");                                          // x키로 메뉴 닫기
         }
+
+        if(selectedMenu == 1) {
+            if(!statConfirmed) {        // 확정전에만 수정 가능
+                if(input.isJustPressed(Action.UI_UP)) {
+                    selectedStat = (selectedStat - 1 + 5) % 5;                                 // 위로 이동
+                }
+
+                if(input.isJustPressed(Action.UI_DOWN)) {
+                    selectedStat = (selectedStat + 1) % 5;                                     // 아래로 이동
+                }
+
+                if(input.isJustPressed(Action.UI_RIGHT) && player.statPoint > 0) {
+                    addStat(selectedStat);                                                    // + 버튼 포인트 있을때만
+                }
+
+                if(input.isJustPressed(Action.UI_LEFT)) {
+                    removeStat(selectedStat);                                                 // - 버튼
+                }
+
+                if(input.isJustPressed(Action.UI_SELECT)) {                                   // x키로 확정
+                    statConfirmed = true;
+                }
+            }
+        }
+    }
+
+    private void addStat(int index) {
+        switch(index) {
+            case 0 -> player.STR++;
+            case 1 -> player.DEX++;
+            case 2 -> player.INT++;
+            case 3 -> player.LUK++;
+            case 4 -> player.VIT++;
+        }
+        player.statPoint--;
+        player.recalcStat();
+    }
+
+    private void removeStat(int index) {
+        if(statConfirmed) {
+            return;
+            
+        }
+        switch(index) {
+            case 0 -> player.STR--;
+            case 1 -> player.DEX--;
+            case 2 -> player.INT--;
+            case 3 -> player.LUK--;
+            case 4 -> player.VIT--;
+        }
+        player.statPoint++;
+        player.recalcStat();
     }
 
     @Override
@@ -102,7 +158,7 @@ public class GameMenuState implements GameState {
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("SansSerif", Font.PLAIN, 16));
         switch(selectedMenu) {
-            case 0 -> renderMain(g2, x + 20, y + 30);       // 현재 상태
+            case 0 -> renderMain(g2, x + 20, y + 30);             // 현재 상태
             case 1 -> renderStatus(g2, x + 20, y + 30);           // 스테이터스 분배창
             case 2 -> renderSkill(g2, x + 20, y + 30);            // 스킬
             case 3 -> renderEquip(g2, x + 20, y + 30);            // 장비
@@ -138,7 +194,29 @@ public class GameMenuState implements GameState {
     }
 
     private void renderStatus(Graphics2D g2, int x, int y) {
-        g2.drawString("스텟 분배 구현 예정", x ,y);
+        g2.drawString("미분배 포인트 : " + player.statPoint, x ,y);       // 남은 분배 포인트 표시
+
+        if(statConfirmed) {
+            g2.setColor(new Color(150 ,150, 150));                // 확정후 회색으로 표시
+            g2.drawString("스텟이 확정되었습니다!", x, y + 220);
+        } else {
+            g2.setColor(Color.white);
+            g2.drawString("Z : 확정", x, y + 220);
+        }
+
+        drawStatRow(g2, x, y + 40, "STR", player.STR, 0);   // 0은 인덱스
+        drawStatRow(g2, x, y + 80, "DEX", player.DEX, 1);
+        drawStatRow(g2, x, y + 120, "INT", player.INT, 2);
+        drawStatRow(g2, x, y + 160, "LUK", player.LUK, 3);
+        drawStatRow(g2, x, y + 200, "VIT", player.VIT, 4);
+
+    }
+
+    private void drawStatRow(Graphics2D g2, int x, int y, String statName, int statValue, int index) {
+        g2.setColor(index == selectedStat ? Color.YELLOW : Color.white);
+        g2.drawString(statName + " : " + statValue, x, y);
+        g2.drawString("[ - ]", x + 200, y);
+        g2.drawString("[ + ]", x + 260, y);
     }
 
     private void renderSkill(Graphics2D g2, int x, int y) {
