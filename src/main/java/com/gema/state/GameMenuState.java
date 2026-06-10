@@ -4,7 +4,8 @@ import com.gema.Game;
 import com.gema.entity.Player;
 import com.gema.system.Action;
 import com.gema.system.InputHandler;
-import com.gema.ui.popup.ConfirmPopup;
+import com.gema.ui.tab.MainTab;
+import com.gema.ui.tab.StatusTab;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
@@ -32,17 +33,20 @@ public class GameMenuState implements GameState {
     };
 
     // 스텟 찍기 관련
-    private final ConfirmPopup confirmpopup;
     private int selectedMenu = 0;
-    private int selectedStat = 0;
-    private boolean statConfirmed = false;      // 스텟 확정 여부
+
+    // 각 탭들
+    private final MainTab maintab;
+    private final StatusTab statustab;
 
 
     public GameMenuState(InputHandler input, GameStateManager stateManager, Player player) {
         this.input        = input;          // 키 입력
         this.stateManager = stateManager;   // 씬 전환
         this.player       = player;         // 스텟 표시용
-        confirmpopup      = new ConfirmPopup(input);    // 팝업 생성
+
+        maintab = new MainTab(player);
+        statustab = new StatusTab(player, input);
     }
 
     public void setBackground(BufferedImage background) {
@@ -51,9 +55,9 @@ public class GameMenuState implements GameState {
 
     @Override
     public void update() {
-        if (confirmpopup.isVisible()) {
-            confirmpopup.update();      // 팝업이 떠 있다면 팝업에 입력
-            return;                     // 팝업이 열려 있을때는 다른 입력 차단
+        if(statustab.isPopupVisible()) {        // 팝업 떠있다면 팝업만 처리
+            statustab.update();
+            return;
         }
 
         if (input.isJustPressed(Action.UI_LEFT)) {
@@ -68,66 +72,9 @@ public class GameMenuState implements GameState {
             stateManager.changeState("PLAY");                                          // x키로 메뉴 닫기
         }
 
-        if (selectedMenu == 1) {
-            if (!statConfirmed) {      // confirmed가 false일때
-                if (input.isJustPressed(Action.UI_UP)) {
-                    selectedStat = (selectedStat - 1 + 5) % 5;                                 // 위로 이동
-                }
-
-                if (input.isJustPressed(Action.UI_DOWN)) {
-                    selectedStat = (selectedStat + 1) % 5;                                     // 아래로 이동
-                }
-
-                if (input.isJustPressed(Action.UI_RIGHT) && player.statPoint > 0) {
-                    addStat(selectedStat);                                                    // + 버튼 포인트 있을때만
-                }
-
-                if (input.isJustPressed(Action.UI_LEFT)) {
-                    removeStat(selectedStat);                                                 // - 버튼
-                }
-
-                if (input.isJustPressed(Action.UI_SELECT)) {                                  // z키로 팝업 열기
-                    confirmpopup.show(
-                            "스탯을 분배하시겠습니까?",
-                            () -> statConfirmed = true,                                       // 예 선택시 확정
-                            () -> {}                                                          // 아니오 선택시 아무것도 안함
-                    );
-                }
-/*
-                이거 아마도 그냥 x누르면 뒤로가기 될듯?
-                if(input.isJustPressed(Action.UI_BACK)) {
-                    confirmpopup.
-                }
-*/
-            }
+        if(selectedMenu == 1) {                                                        // 스테이터스 탭일경우에만 update
+            statustab.update();
         }
-    }
-
-    private void addStat(int index) {
-        switch(index) {
-            case 0 -> player.STR++;
-            case 1 -> player.DEX++;
-            case 2 -> player.INT++;
-            case 3 -> player.LUK++;
-            case 4 -> player.VIT++;
-        }
-        player.statPoint--;
-        player.recalcStat();
-    }
-
-    private void removeStat(int index) {
-        if(statConfirmed) {
-            return;
-        }
-        switch(index) {
-            case 0 -> player.STR--;
-            case 1 -> player.DEX--;
-            case 2 -> player.INT--;
-            case 3 -> player.LUK--;
-            case 4 -> player.VIT--;
-        }
-        player.statPoint++;
-        player.recalcStat();
     }
 
     @Override
@@ -152,7 +99,7 @@ public class GameMenuState implements GameState {
         g2.setColor(new Color(20, 20, 40));
         g2.drawRoundRect(menuX, menuY, menuW, menuH, 16, 16);
 
-        // 매뉴 그리기
+        // 메뉴 그리기
         int tabW = menuW / menuarr.length;
 
         for(int i = 0; i < menuarr.length; i++) {
@@ -183,8 +130,8 @@ public class GameMenuState implements GameState {
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("SansSerif", Font.PLAIN, 16));
         switch(selectedMenu) {
-            case 0 -> renderMain(g2, x + 20, y + 30);             // 현재 상태
-            case 1 -> renderStatus(g2, x + 20, y + 30);           // 스테이터스 분배창
+            case 0 -> maintab.render(g2, x + 20, y + 30);             // 메인
+            case 1 -> statustab.render(g2, x + 20, y + 30);           // 스테이터스 분배창
             case 2 -> renderSkill(g2, x + 20, y + 30);            // 스킬
             case 3 -> renderEquip(g2, x + 20, y + 30);            // 장비
             case 4 -> renderIncentory(g2, x + 20, y + 30);        // 인벤토리
@@ -195,48 +142,6 @@ public class GameMenuState implements GameState {
         }
     }
 
-    // 이 아래 각 tab 구현
-    private void renderMain(Graphics2D g2, int x, int y) {
-        g2.drawString("HP : " + player.hp + " / " + player.maxHp, x, y);
-        g2.drawString("MP : " + player.mp + " / " + player.maxMp, x, y + 30);
-        g2.drawString("공격력 : " + player.att, x, y + 60);
-        g2.drawString("방어력 : " + player.def, x, y + 90);
-        g2.drawString("마법 공격력 : " + player.Matt, x, y + 120);
-        g2.drawString("마법 방어력 : " + player.Mdef, x, y + 150);
-
-        g2.drawString("STR : " + player.STR, x + 150, y + 30);
-        g2.drawString("DEX : " + player.DEX, x + 150, y + 60);
-        g2.drawString("INT : " + player.INT, x + 150, y + 90);
-        g2.drawString("LUK : " + player.LUK, x + 150, y + 120);
-        g2.drawString("VIT : " + player.VIT, x + 150, y + 150);
-    }
-
-    private void renderStatus(Graphics2D g2, int x, int y) {
-        g2.setColor(Color.WHITE);
-        g2.drawString("미분배 포인트 : " + player.statPoint, x ,y);       // 남은 분배 포인트 표시
-
-        drawStatRow(g2, x, y + 40, "STR", player.STR, 0);   // 0은 인덱스
-        drawStatRow(g2, x, y + 80, "DEX", player.DEX, 1);
-        drawStatRow(g2, x, y + 120, "INT", player.INT, 2);
-        drawStatRow(g2, x, y + 160, "LUK", player.LUK, 3);
-        drawStatRow(g2, x, y + 200, "VIT", player.VIT, 4);
-
-        if(statConfirmed) {
-            g2.setColor(new Color(150 ,150, 150));                // 확정후 회색으로 표시
-            g2.drawString("스텟이 확정되었습니다!", x, y + 220);
-        } else {
-            g2.setColor(selectedStat == 5 ? Color.YELLOW : Color.WHITE);   // 확정버튼 선택시 노란색
-            g2.drawString("[분배하기]", x, y + 220);
-        }
-
-        confirmpopup.render(g2);                // 팝업 렌더링
-    }
-
-    private void drawStatRow(Graphics2D g2, int x, int y, String statName, int statValue, int index) {
-        g2.setColor(index == selectedStat ? Color.YELLOW : Color.white);
-        g2.drawString(statName, x, y);
-        g2.drawString("<  " + statValue + "  >", x + 100, y);
-    }
 
     private void renderSkill(Graphics2D g2, int x, int y) {
         g2.drawString("스킬 구현 예정", x ,y);
