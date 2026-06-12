@@ -83,6 +83,13 @@ public class GameMenuState implements GameState {
                 if(selectedMenu == 1) {
                     statustab.backup();
                 }
+                // 디버그용
+                System.out.println(statustab.backupSTR);
+                System.out.println(statustab.backupDEX);
+                System.out.println(statustab.backupINT);
+                System.out.println(statustab.backupLUK);
+                System.out.println(statustab.backupVIT);
+                System.out.println(statustab.backupStatPoint);
             }
 
             if (input.isJustPressed(Action.UI_BACK)) {
