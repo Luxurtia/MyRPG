@@ -32,6 +32,15 @@ public class GameMenuState implements GameState {
             "종료"
     };
 
+    // 메뉴와 메뉴 내부 내용 선택 분리
+    private enum MenuMode {
+        Tab_Select,     // 탭 메뉴 조작
+        Tab_Content     // 탭 내용 조작
+    }
+
+    private MenuMode mode = MenuMode.Tab_Select;        // 기본은 탭 선택 모드
+
+
     // 스텟 찍기 관련
     private int selectedMenu = 0;
 
@@ -55,25 +64,45 @@ public class GameMenuState implements GameState {
 
     @Override
     public void update() {
-        if(statustab.isPopupVisible()) {        // 팝업 떠있다면 팝업만 처리
+        if (statustab.isPopupVisible()) {        // 팝업 떠있다면 팝업만 처리
             statustab.update();
             return;
         }
 
-        if (input.isJustPressed(Action.UI_LEFT)) {
-            selectedMenu = (selectedMenu - 1 + menuarr.length) % menuarr.length;       // 왼쪽으로 이동
-        }
+        if (mode == MenuMode.Tab_Select) {                                                 // 탭 선택 모드일때
+            if (input.isJustPressed(Action.UI_LEFT)) {
+                selectedMenu = (selectedMenu - 1 + menuarr.length) % menuarr.length;       // 왼쪽으로 이동
+            }
 
-        if (input.isJustPressed(Action.UI_RIGHT)) {
-            selectedMenu = (selectedMenu + 1) % menuarr.length;                        // 오른쪽으로 이동
-        }
+            if (input.isJustPressed(Action.UI_RIGHT)) {
+                selectedMenu = (selectedMenu + 1) % menuarr.length;                        // 오른쪽으로 이동
+            }
 
-        if (input.isJustPressed(Action.UI_BACK)) {
-            stateManager.changeState("PLAY");                                          // x키로 메뉴 닫기
-        }
+            if(input.isJustPressed(Action.UI_SELECT)) {                                    // 탭선택시 진입 및 스텟 백업
+                mode = MenuMode.Tab_Content;
+                if(selectedMenu == 1) {
+                    statustab.backup();
+                }
+            }
 
-        if(selectedMenu == 1) {                                                        // 스테이터스 탭일경우에만 update
-            statustab.update();
+            if (input.isJustPressed(Action.UI_BACK)) {
+                stateManager.changeState("PLAY");                                          // x키로 메뉴 닫기
+            }
+        } else {                                                                           // 탭 내용 조작 모드일때 back 입력시
+            if(input.isJustPressed(Action.UI_BACK)) {
+                mode = MenuMode.Tab_Select;                                                // 탭 선택으로 복귀
+                resetCurrentTab();                                                         // 미확정 스텟 초기화
+                return;
+            }
+        }
+            if (selectedMenu == 1) {                                                        // 스테이터스 탭일경우에만 update
+                statustab.update();
+            }
+    }
+
+    private void resetCurrentTab() {                                                        // 스테이터스 탭 초기화
+        if(selectedMenu == 1) {
+            statustab.reset();
         }
     }
 

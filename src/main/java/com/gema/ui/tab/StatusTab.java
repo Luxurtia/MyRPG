@@ -14,6 +14,37 @@ public class StatusTab {
     
     private int selectedStat = 0;                       // 처음 선택될 스텟의 인덱스
     private boolean statConfirmed = false;              // 스텟의 확정여부
+
+    // 스테이터스 탭 진입시 현재 스텟 백업
+    private int backupSTR;
+    private int backupDEX;
+    private int backupINT;
+    private int backupLUK;
+    private int backupVIT;
+    private int backupStatPoint;
+
+     public void backup() {
+         backupSTR        = player.STR;
+         backupDEX        = player.DEX;
+         backupINT        = player.INT;
+         backupLUK        = player.LUK;
+         backupVIT        = player.VIT;
+         backupStatPoint  = player.statPoint;
+
+     }
+
+    public void reset() {
+        if(!statConfirmed) {
+            player.STR = backupSTR;
+            player.DEX = backupDEX;
+            player.INT = backupINT;
+            player.LUK = backupLUK;
+            player.VIT = backupVIT;
+            player.statPoint = backupStatPoint;
+            player.recalcStat();
+        }
+        selectedStat = 0;
+    }
     
     private static final String[] STAT_NAMES = {
             "STR",
