@@ -15,7 +15,7 @@ public class CheckPopup {
     private boolean Cvisible = false;          // C = Check
     private String checkMessage;
 
-    private static final int POPUP_W = 300;
+    private static final int POPUP_W = 400;
     private static final int POPUP_H = 120;
     private static final int POPUP_X = (Game.SCREEN_WIDTH - POPUP_W) / 2;
     private static final int POPUP_Y = (Game.SCREEN_HEIGHT - POPUP_H) / 2;
@@ -24,7 +24,8 @@ public class CheckPopup {
         this.input = input;
     }
 
-    public void show(String warnMessage) {
+    public void show(String checkMessage) {
+        this.checkMessage = checkMessage;
         this.Cvisible = true;
     }
 
@@ -62,8 +63,11 @@ public class CheckPopup {
         drawCenteredString(g2, checkMessage, POPUP_X, POPUP_Y + 40, POPUP_W);                    // 메세지 표시
 
         g2.setColor(Color.YELLOW);
-        drawCenteredString(g2, "[ 닫기 ]", POPUP_X, POPUP_Y + 85, POPUP_W / 2);
+        drawCenteredString(g2, "[ 닫기 ]", POPUP_X + 100, POPUP_Y + 85, POPUP_W / 2);
+
+
     }
+
     private void drawCenteredString(Graphics2D g2, String text, int x, int y, int w) {
         FontMetrics fm = g2.getFontMetrics();
         int textX = x + (w - fm.stringWidth(text)) / 2;

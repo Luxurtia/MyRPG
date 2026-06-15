@@ -14,12 +14,15 @@ public class GameStateManager {
 
     private final InputHandler input;
     private final AssetManager assets;
+
     private Game game;
+    private final PlayState playState;
 
     public GameStateManager(InputHandler input, AssetManager assets, GameState initialState) {
         this.input   = input;
         this.assets  = assets;
         currentState = initialState;    // 처음 시작할 상태를 받아서 세팅
+        playState = new PlayState(input, this, assets);
     }
 
     public void setGame(Game game) {
@@ -32,7 +35,7 @@ public class GameStateManager {
     public void changeState(String state) {
         switch(state) {
             case "MENU"     -> currentState = new MenuState(input, game, this);
-            case "PLAY"     -> currentState = new PlayState(input, this, assets);
+            case "PLAY"     -> currentState = playState;
             default         -> System.out.println("[GameStateManager] : 알 수 없는 상태 " + state);
         }
     }

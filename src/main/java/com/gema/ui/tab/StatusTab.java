@@ -4,24 +4,26 @@ import com.gema.entity.Player;
 import com.gema.system.Action;
 import com.gema.system.InputHandler;
 import com.gema.ui.popup.ConfirmPopup;
+import com.gema.ui.popup.CheckPopup;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Color;
 
 public class StatusTab {
     private final Player player;
     private final InputHandler input;
     private final ConfirmPopup confirm;
+    private final CheckPopup CPopup;
     
     private int selectedStat = 0;                       // 처음 선택될 스텟의 인덱스
-    private boolean statConfirmed = false;              // 스텟의 확정여부
 
-    // 스테이터스 탭 진입시 현재 스텟 백업
-    private int backupSTR;
-    private int backupDEX;
-    private int backupINT;
-    private int backupLUK;
-    private int backupVIT;
-    private int backupStatPoint;
+    // 스테이터스 탭 진입시 현재 스텟 백업     // 현재 디버그를 위해 public 이지만 추후 private로 변경 해야됨
+    public int backupSTR;
+    public int backupDEX;
+    public int backupINT;
+    public int backupLUK;
+    public int backupVIT;
+    public int backupStatPoint;
 
      public void backup() {
          backupSTR        = player.STR;
@@ -34,18 +36,17 @@ public class StatusTab {
      }
 
     public void reset() {
-        if(!statConfirmed) {
-            player.STR = backupSTR;
-            player.DEX = backupDEX;
-            player.INT = backupINT;
-            player.LUK = backupLUK;
-            player.VIT = backupVIT;
-            player.statPoint = backupStatPoint;
-            player.recalcStat();
-        }
+        player.STR = backupSTR;
+        player.DEX = backupDEX;
+        player.INT = backupINT;
+        player.LUK = backupLUK;
+        player.VIT = backupVIT;
+        player.statPoint = backupStatPoint;
+
+        player.recalcStat();
         selectedStat = 0;
     }
-    
+
     private static final String[] STAT_NAMES = {
             "STR",
             "DEX", 
@@ -58,6 +59,7 @@ public class StatusTab {
         this.player = player;
         this.input = input;
         this.confirm = new ConfirmPopup(input);
+        this.CPopup = new CheckPopup(input);
     }
     
     public void update() {
@@ -65,33 +67,47 @@ public class StatusTab {
             confirm.update();               
             return;
         }
-        
-        if(statConfirmed) {                 // 확정후 입력 제한
+
+        if(CPopup.CisVisible()) {
+            CPopup.update();
             return;
         }
         
         if (input.isJustPressed(Action.UI_UP)) {
-            selectedStat = (selectedStat - 1 + 5) % 5;                                 // 위로 이동
+            selectedStat = (selectedStat - 1 + 6) % 6;                                 // 위로 이동
         }
 
         if (input.isJustPressed(Action.UI_DOWN)) {
-            selectedStat = (selectedStat + 1) % 5;                                     // 아래로 이동
+            selectedStat = (selectedStat + 1) % 6;                                     // 아래로 이동
         }
 
-        if (input.isJustPressed(Action.UI_RIGHT) && player.statPoint > 0) {
+        if (input.isJustPressed(Action.UI_RIGHT) && player.statPoint > 0 && selectedStat != 5) {
             addStat(selectedStat);                                                    // 포인트 있을때만 증가가능
         }
 
-        if (input.isJustPressed(Action.UI_LEFT)) {
-            removeStat(selectedStat);                                                 // - 버튼
+        if (input.isJustPressed(Action.UI_LEFT) && selectedStat != 5) {
+            removeStat(selectedStat);                                                 //
         }
 
-        if (input.isJustPressed(Action.UI_SELECT)) {                                  // z키로 팝업 열기
-            confirm.show(
-                    "스탯을 분배하시겠습니까?",
-                    () -> statConfirmed = true,                                       // 예 선택시 확정
-                    () -> {}                                                          // 아니오 선택시 아무것도 안함
-            );
+        if (selectedStat == 5 && input.isJustPressed(Action.UI_SELECT)) {             // z키로 팝업 열기\\
+            if(player.statPoint < backupStatPoint) {
+                confirm.show(
+                        "스탯을 분배하시겠습니까?",
+                        () -> {
+                            backupStatPoint = player.statPoint;
+                            backupSTR = player.STR;
+                            backupDEX = player.DEX;
+                            backupINT = player.INT;
+                            backupLUK = player.LUK;
+                            backupVIT = player.VIT;
+                        },                         // 예 선택시 확정 및 포인트 갱신
+                        () -> {}                                                          // 아니오 선택시 아무것도 안함
+                );
+            } else {
+                CPopup.show(
+                        "변경사항이 없습니다."
+                );
+            }
         }
     }
 
@@ -105,15 +121,11 @@ public class StatusTab {
         drawStatRow(g2, x, y + 160, "LUK", player.LUK, 3);
         drawStatRow(g2, x, y + 200, "VIT", player.VIT, 4);
 
-        if (statConfirmed) {
-            g2.setColor(new Color(150, 150, 150));                // 확정후 회색으로 표시
-            g2.drawString("스텟이 확정되었습니다!", x, y + 220);
-        } else {
-            g2.setColor(selectedStat == 5 ? Color.YELLOW : Color.WHITE);   // 확정버튼 선택시 노란색
-            g2.drawString("[분배하기]", x, y + 220);
-        }
+        g2.setColor(selectedStat == 5 ? Color.YELLOW : Color.WHITE);   // 확정버튼 / 선택시 노란색
+        g2.drawString("[분배하기]", x, y + 250);
 
         confirm.render(g2);                // 팝업 렌더링
+        CPopup.render(g2);
     }
 
     private void drawStatRow(Graphics2D g2, int x, int y, String statName, int statValue, int index) {
@@ -123,7 +135,7 @@ public class StatusTab {
     }
 
     private void addStat(int index) {
-        switch(index) {
+        switch (index) {
             case 0 -> player.STR++;
             case 1 -> player.DEX++;
             case 2 -> player.INT++;
@@ -135,21 +147,62 @@ public class StatusTab {
     }
 
     private void removeStat(int index) {
-        if(statConfirmed) {
-            return;
+        switch(index) {                     // 스텟 감소 조정시 기존 스텟 밑으로 감소 불가
+            case 0 -> {
+                if(player.STR <= backupSTR) {
+                    CPopup.show(
+                            "현재 스텟 미만으로 스텟을 내릴 수 없습니다."
+                    );
+                } else {
+                    player.STR--;
+                    player.statPoint++;
+                }
+            }
+            case 1 -> {
+                if(player.DEX <= backupDEX) {
+                    CPopup.show(
+                            "현재 스텟 미만으로 스텟을 내릴 수 없습니다."
+                    );
+                } else {
+                    player.DEX--;
+                    player.statPoint++;
+                }
+            }
+            case 2 -> {
+                if(player.INT <= backupINT) {
+                    CPopup.show(
+                            "현재 스텟 미만으로 스텟을 내릴 수 없습니다."
+                    );
+                } else {
+                    player.INT--;
+                    player.statPoint++;
+                }
+            }
+            case 3 -> {
+                if(player.LUK <= backupLUK) {
+                    CPopup.show(
+                            "현재 스텟 미만으로 스텟을 내릴 수 없습니다."
+                    );
+                } else {
+                    player.LUK--;
+                    player.statPoint++;
+                }
+            }
+            case 4 -> {
+                if(player.VIT <= backupVIT) {
+                    CPopup.show(
+                            "현재 스텟 미만으로 스텟을 내릴 수 없습니다."
+                    );
+                } else {
+                    player.VIT--;
+                    player.statPoint++;
+                }
+            }
         }
-        switch(index) {
-            case 0 -> player.STR--;
-            case 1 -> player.DEX--;
-            case 2 -> player.INT--;
-            case 3 -> player.LUK--;
-            case 4 -> player.VIT--;
-        }
-        player.statPoint++;
         player.recalcStat();
     }
 
     public boolean isPopupVisible() {           // 팝업 표시 여부 확인
-        return confirm.isVisible();
+        return confirm.isVisible() || CPopup.CisVisible();
     }
 }

@@ -84,12 +84,12 @@ public class GameMenuState implements GameState {
                     statustab.backup();
                 }
                 // 디버그용
-                System.out.println(statustab.backupSTR);
-                System.out.println(statustab.backupDEX);
-                System.out.println(statustab.backupINT);
-                System.out.println(statustab.backupLUK);
-                System.out.println(statustab.backupVIT);
-                System.out.println(statustab.backupStatPoint);
+                System.out.println("str : " + statustab.backupSTR);
+                System.out.println("dex : " + statustab.backupDEX);
+                System.out.println("int : " + statustab.backupINT);
+                System.out.println("luk : " + statustab.backupLUK);
+                System.out.println("vit : " + statustab.backupVIT);
+                System.out.println("statP : " + statustab.backupStatPoint);
             }
 
             if (input.isJustPressed(Action.UI_BACK)) {
@@ -101,10 +101,11 @@ public class GameMenuState implements GameState {
                 resetCurrentTab();                                                         // 미확정 스텟 초기화
                 return;
             }
-        }
+
             if (selectedMenu == 1) {                                                        // 스테이터스 탭일경우에만 update
                 statustab.update();
             }
+        }
     }
 
     private void resetCurrentTab() {                                                        // 스테이터스 탭 초기화
