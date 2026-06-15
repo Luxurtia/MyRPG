@@ -32,6 +32,8 @@ public class Game extends JPanel implements Runnable {  // jpanel 상속 runnabl
     private int frameCount = 0;                 // 1초동안 몇 프래임 그렸는지 카운트
     private long fpsTimer = System.nanoTime();  // 1초 측정용 타이머
 
+    public static final GameSettings settings = new GameSettings();     // 전역으로 접근 가능하게
+
     public Game() {
         setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));   // 패널 크기 지정
         setBackground(Color.BLACK);
